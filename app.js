@@ -1,14 +1,51 @@
 var chalk = require('chalk'),
     moment = require("moment"),
     imc = require("./utils/imc"),
-    validate = require("./utils/validate");
+    validate = require("./utils/validate"),
+    inquirer = require('inquirer');
+
+var questions = [
+  {
+    type: 'input',
+    name: 'height',
+    message: 'What\'s your height (m)',
+    validate: function (value) {
+      if ( !isNaN(value) ) {
+        return true;
+      }
+
+      return 'Please enter a number';
+    }
+  },
+  {
+    type: 'input',
+    name: 'weight',
+    message: 'What\'s your weight (kg)',
+    validate: function (value) {
+      if ( !isNaN(value) ) {
+        return true;
+      }
+
+      return 'Please enter a number';
+    }
+  }
+];
+
+var processAnswersInterval;
+
+inquirer.prompt(questions).then(function (answers) {
+  console.log('Calculando...');
+  processAnswersInterval = setInterval(function(){
+    processAnswers(answers);
+  }, 1000);
+});
 
 
-(function init() {
+function processAnswers(answers) {
   let message = 'Please enter your height(m) and weight(kg) after npm start command. I.E. "npm start 1.70 68"';
   
-  const height = process.argv[2],
-    weight = process.argv[3],
+  const height = answers.height,
+    weight = answers.weight,
     imcResult = imc.calcIMC(height, weight),
     clasification = imc.findClasif(imcResult);
 
@@ -26,4 +63,5 @@ var chalk = require('chalk'),
     console.log( chalk.red(message) );
   }
 
-})();
+  clearInterval(processAnswersInterval);
+};
