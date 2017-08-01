@@ -17,39 +17,52 @@ function calculateIMC(height, mass) {
  *    @param  {number} imcValue
  *    @return {string} clasificationMsg
  */
-function findClasification(imcValue) {
-  var clasificationMsg = '';
+function findClasification(imcValue, format) {
+  var clasification
+      color = '';
 
   switch(true) {
     case imcValue < 16:
-      clasificationMsg = chalk.red('Infrapeso: Delgadez Severa');
+      clasification = 'Infrapeso: Delgadez Severa';
+      color = 'red';
       break;
     case imcValue < 17:
-      clasificationMsg = chalk.red('Infrapeso: Delgadez moderada');
+      clasification = 'Infrapeso: Delgadez moderada';
+      color = 'red';
       break;
     case imcValue < 18.50:
-      clasificationMsg = colors.fg.getRgb(5,1,0) + 'Infrapeso: Delgadez aceptable' + colors.reset;
+      clasification: 'Infrapeso: Delgadez aceptable';
+      color = 'yellow';
       break;
     case imcValue < 25:
-      clasificationMsg = chalk.green('Peso Normal');
+      clasification = 'Peso Normal';
+      color = 'green';
       break;
     case imcValue < 30:
-      clasificationMsg = chalk.yellow('Sobrepeso');
+      clasification = 'Sobrepeso';
+      color = 'yellow';
       break;
     case imcValue < 35:
-      clasificationMsg = chalk.red('Obeso: Tipo I');
+      clasification = 'Obeso: Tipo I';
+      color = 'red';
       break;
     case imcValue < 40:
-      clasificationMsg = chalk.red('Obeso: Tipo II');
+      clasification = 'Obeso: Tipo II';
+      color = 'red';
       break;
-    case imcValue > 40:
-      clasificationMsg = chalk.red('Obeso: Tipo III');
+    case imcValue >= 40:
+      clasification = 'Obeso: Tipo III';
+      color = 'red';
       break;
     default:
-      clasificationMsg = "there's an error";
+      clasification = 'there\'s an error';
   }
 
-  return clasificationMsg;
+  if(format == 'plain'){
+    return clasification;
+  } else {
+    return chalk[color](clasification);
+  }
 }
 
 module.exports = {

@@ -2,7 +2,8 @@ var chalk = require('chalk'),
     moment = require("moment"),
     imc = require("./utils/imc"),
     validate = require("./utils/validate"),
-    inquirer = require('inquirer');
+    inquirer = require('inquirer'),
+    fs = require('fs');
 
 var questions = [
   {
@@ -33,35 +34,52 @@ var questions = [
 
 var processAnswersInterval;
 
-inquirer.prompt(questions).then(function (answers) {
+/*
+  Ask questions through the console
+ */
+inquirer.prompt(questions).then( (answers) => {
   console.log('Calculando...');
-  processAnswersInterval = setInterval(function(){
-    processAnswers(answers);
-  }, 1000);
+  processAnswersInterval = setInterval( () => { processAnswers(answers); }, 1000 );
 });
 
-
+/*
+  Get Answers, process them, print the message
+*/
 function processAnswers(answers) {
-  let message = 'Please enter your height(m) and weight(kg) after npm start command. I.E. "npm start 1.70 68"';
+  let message = 'Please enter your height(m) and weight(kg) like this: "npm start 1.70 68"';
   
   const height = answers.height,
-    weight = answers.weight,
-    imcResult = imc.calcIMC(height, weight),
-    clasification = imc.findClasif(imcResult);
+        weight = answers.weight,
+        imcResult = imc.calcIMC(height, weight).toFixed(2),
+        clasificationMsg = imc.findClasif(imcResult),
+        clasification = imc.findClasif(imcResult, 'plain'),
+        date = moment().format('LLLL');
 
   if( validate.isNumber(weight) && validate.isNumber(height) ){
     message = `
-      ${ chalk.italic(moment().format('LLLL')) }
+      ${ chalk.italic(date) }
       Hi ${ chalk.underline.bold(process.env.USER) }
       Your IMC is ${ chalk.bold(imcResult) }
-      Your clasification is ${ clasification }
+      Your clasification is ${ clasificationMsg }
     `;
 
     console.log(message);
-    
+    writeFile(date, imcResult, clasification);
+
   } else {
     console.log( chalk.red(message) );
   }
 
   clearInterval(processAnswersInterval);
+};
+
+/*
+  Write one line in the file each time questions are answered
+ */
+function writeFile(date, imcResult, clasification) {
+  let log = '[' + date + ']' + ' - ' + imcResult + ' - ' + clasification;
+
+  logger = fs.createWriteStream( 'IMC-log.txt', { flags: 'a'} );
+  logger.write(log + '\n');
+  console.log('The file has been saved!');
 };
