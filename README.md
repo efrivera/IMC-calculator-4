@@ -21,3 +21,5 @@ Continuando con el ejercicio anterior realizar las siguientes modificaciones:
 `[Fecha y hora] - IMC - Clasificación`
 
 El archivo debe ser guardado en la carpeta `HOME` del usuario autenticado del sistema. Esta información puede ser obtenida de `process.ENV`.
+
+[< Ejercicio Anterior](https://github.com/efrivera/imc-calculator) | [Ejercicio Siguiente >](https://github.com/efrivera/IMC-calculator-5)
